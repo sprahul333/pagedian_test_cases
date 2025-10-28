@@ -1,11 +1,14 @@
 package business;
 
 import actions.login.LoginActions;
+import framework.GenericExceptions;
 
 public class LoginBusiness extends LoginActions {
 
     public void loginToTheApplication(String userType)
     {
+        if(seleniumUtils.checkForTextExistsOrNot("HTTP Status 404"))
+            throw new GenericExceptions("Unable to launch the application as it is down");
         if(userType.equalsIgnoreCase("Cashier"))
         {
             enterDataIntoUserName(propertiesUtil.getCashierUserName());
