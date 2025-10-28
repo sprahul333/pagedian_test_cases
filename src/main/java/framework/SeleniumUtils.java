@@ -192,8 +192,9 @@ public class SeleniumUtils {
 
     public String launchApplication(String url)
     {
-        if(url.isBlank() || url.isEmpty())
-            throw new GenericExceptions("Given URL is empty or blank");
+        try {
+            if (url.isBlank() || url.isEmpty())
+                throw new GenericExceptions("Given URL is empty or blank");
 
 //        else if(!url.contains("https"))
 //            throw new GenericExceptions("Given URL does not contain https:");
@@ -201,16 +202,27 @@ public class SeleniumUtils {
 //        else if(!url.startsWith("https"))
 //            throw new GenericExceptions("Given URL does not start with https:");
 
-        driver.get(url);
+            driver.get(url);
 
-        if(new PropertiesUtil().getResolutionSize().isBlank())
-        driver.manage().window().maximize();
+            if (new PropertiesUtil().getResolutionSize().isBlank())
+                driver.manage().window().maximize();
 
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofMinutes(10));
+            driver.manage().timeouts().pageLoadTimeout(Duration.ofMinutes(10));
 
-        reports.logReportsToTheFile(LogStatus.INFO_SCREENSHOT,"Launching the application for the URL: <a>"+url+"</a>");
+            reports.logReportsToTheFile(LogStatus.INFO_SCREENSHOT, "Launching the application for the URL: <a>" + url + "</a>");
 //        reports.logReportsToTheFile(LogStatus.INFO_SCREENSHOT,"Launched the application successfully for: "+url);
-        return driver.getWindowHandle();
+            return driver.getWindowHandle();
+        }
+
+        catch (WebDriverException e)
+        {
+            if(e.getMessage().contains("ERR_CONNECTION_TIMED_OUT"))
+                throw new GenericExceptions("Unable to launch the application for the URL: <a>" + url + "</a> due to network issues");
+            else {
+                e.printStackTrace();
+                throw new GenericExceptions("Unable to launch the application for the URL: due to" + e.getMessage());
+            }
+        }
     }
 
     public String createNewTabAndLaunchApplication(String url) {

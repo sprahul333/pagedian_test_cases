@@ -179,7 +179,9 @@ public class Hook {
     public String getScenarioName(Scenario sc) {
         //sc.getSourceTagNames() --> Will return a collection of strings
         //Collectors.joining() --> Joining the strings on the basis of '_' symbol
-        return sc.getSourceTagNames().stream().collect(Collectors.joining("_")).replace("@", "");
+
+        return sc.getName().replace(":","").replace("-","_").trim();
+        //return sc.getSourceTagNames().stream().collect(Collectors.joining("_")).replace("@", "").replace(":","-");
     }
 
     public String getTestCaseName(Scenario sc) {
